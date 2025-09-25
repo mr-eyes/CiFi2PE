@@ -107,7 +107,7 @@ for record in SeqIO.parse(args.FastqFile, "fastq"):
         digested_record = list(Restriction.NlaIII.catalyse(record.seq))
         re_indices = Restriction.NlaIII.search(record.seq)
     sequencenumber += 1
-    # print("We're on " + str(sequencenumber))
+    print(f"\rProcessing sequence {sequencenumber}...", end='', flush=True)
     if len(digested_record) > 3:
         current_R1s, current_R2s, current_lengths, current_number = fic2pe(record, args.RestrictionEnzyme)
         
@@ -129,6 +129,8 @@ output_handle_R1.close()
 output_handle_R2.close()
 fraglen_handle.close()
 fragcount_handle.close()
+
+print(f"\rProcessed {sequencenumber} sequences. Generating histograms...")
 
 # Read fragment lengths from file for histogram
 all_lengthOfConcatenatedFragments = []
@@ -164,3 +166,5 @@ plt.title(args.RestrictionEnzyme + ' - Fragment Counts')
 
 fragcounthistfile = args.out + "_fragcounthist.png"
 plt.savefig(fragcounthistfile)
+
+print("Processing complete! Output files generated.")
